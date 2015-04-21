@@ -8,21 +8,29 @@ import java.net.URI;
 
 public class URIFactoryHandler implements HttpHandler {
 
-    @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        HttpHandler handler = URIFactoryHandler.getHandler(httpExchange.getRequestURI());
-        handler.handle(httpExchange);
+    private URIMatcher uriMatcher;
+
+    public URIFactoryHandler() {
+        uriMatcher = new URIMatcher();
     }
 
-    public static HttpHandler getHandler(URI requestURI) {
-        String path = requestURI.getPath();
-        if (path.endsWith("/login")) {
-            return new LoginHandler(requestURI);
-        } else if (path.endsWith("/highscorelist")) {
-            return new HighScoreListHandler(requestURI);
-        } else {
-            return new UserScoreLevelHandler(requestURI);
+    @Override
+    public void handle(HttpExchange httpExchange) throws IOException {
+        HttpHandler handler = getHandler(httpExchange.getRequestURI());
+        if (handler != null) handler.handle(httpExchange);
+    }
+
+    private HttpHandler getHandler(URI requestURI) {
+        final String path = requestURI.getPath();
+        HttpHandler handler = null;
+        if (uriMatcher.isLogin(path)) {
+            handler = new LoginHandler(requestURI);
+        } else if (uriMatcher.isHighScoreList(path)) {
+            handler = new HighScoreListHandler(requestURI);
+        } else if (uriMatcher.isUserScoreLevel(path)) {
+            handler = new UserScoreLevelHandler(requestURI);
         }
+        return handler;
     }
 
 }
