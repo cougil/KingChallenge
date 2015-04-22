@@ -11,38 +11,78 @@ public class URIMatcherTest {
     private URIMatcher uriMatcher;
 
     @Before
-    public void setUp() throws Exception {
-        uriMatcher = new URIMatcher();
+    public void setUp() {
     }
 
     @Test
-    public void loginUriIsOkWithAValidUserId() throws Exception {
+    public void loginUriShouldHaveValidUserId() {
         assertTrue(uriMatcher.isLogin("/4711/login"));
     }
 
     @Test
-    public void loginUriIsKoWithInvalidUserId() throws Exception {
+    public void loginUriIsInvalidWithInvalidUserId() {
         assertFalse(uriMatcher.isLogin("/asdf/login"));
     }
 
     @Test
-    public void loginUriIsKoWithoutUserId() throws Exception {
+    public void loginUriIsInvalidWithoutUserId() {
         assertFalse(uriMatcher.isLogin("//login"));
     }
 
     @Test
-    public void loginUriIsKoWithoutLogin() throws Exception {
+    public void rootUriIsInvalidLoginUri() {
         assertFalse(uriMatcher.isLogin("/"));
     }
 
-
     @Test
-    public void testIsHighScoreList() throws Exception {
-
+    public void userScoreUriShouldHaveValidSessionKeyAndLevelId() {
+        assertTrue(uriMatcher.isUserScoreLevel("/4711/score?sessionkey=asdfghi"));
     }
 
     @Test
-    public void testIsUserScoreLevel() throws Exception {
-
+    public void userScoreUriIsInvalidWithEmptySessionKey() {
+        assertFalse(uriMatcher.isUserScoreLevel("/4711/score?sessionkey="));
     }
+
+    @Test
+    public void userScoreUriIsInvalidWithoutSessionKey() {
+        assertFalse(uriMatcher.isUserScoreLevel("/4711/score"));
+    }
+
+    @Test
+    public void userScoreUriIsInvalidWithInvalidLevelId() {
+        assertFalse(uriMatcher.isUserScoreLevel("/asdf/score?sessionkey=asdfghi"));
+    }
+
+    @Test
+    public void userScoreUriIsInvalidWithoutLevelId() {
+        assertFalse(uriMatcher.isUserScoreLevel("//score?sessionkey=asdfghi"));
+    }
+
+    @Test
+    public void rootUriIsInvalidUserScoreUri() {
+        assertFalse(uriMatcher.isUserScoreLevel("/"));
+    }
+
+    @Test
+    public void highScoreListUriShouldHaveValidLevelId() {
+        assertTrue(uriMatcher.isHighScoreList("/4711/highscorelist"));
+    }
+
+    @Test
+    public void highScoreListUriIsInvalidWithInvalidLevelId() {
+        assertFalse(uriMatcher.isHighScoreList("/asdf/highscorelist"));
+    }
+
+    @Test
+    public void highScoreListUriIsInvalidWithoutLevelId() {
+        assertFalse(uriMatcher.isUserScoreLevel("//highscorelist"));
+    }
+
+    @Test
+    public void rootUriIsInvalidHighScoreListUri() {
+        assertFalse(uriMatcher.isHighScoreList("/"));
+    }
+
+
 }

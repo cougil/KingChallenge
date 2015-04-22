@@ -8,12 +8,6 @@ import java.net.URI;
 
 public class URIFactoryHandler implements HttpHandler {
 
-    private URIMatcher uriMatcher;
-
-    public URIFactoryHandler() {
-        uriMatcher = new URIMatcher();
-    }
-
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         HttpHandler handler = getHandler(httpExchange.getRequestURI());
@@ -23,11 +17,11 @@ public class URIFactoryHandler implements HttpHandler {
     private HttpHandler getHandler(URI requestURI) {
         final String path = requestURI.getPath();
         HttpHandler handler = null;
-        if (uriMatcher.isLogin(path)) {
+        if (URIMatcher.isLogin(path)) {
             handler = new LoginHandler(requestURI);
-        } else if (uriMatcher.isHighScoreList(path)) {
+        } else if (URIMatcher.isHighScoreList(path)) {
             handler = new HighScoreListHandler(requestURI);
-        } else if (uriMatcher.isUserScoreLevel(path)) {
+        } else if (URIMatcher.isUserScoreLevel(path)) {
             handler = new UserScoreLevelHandler(requestURI);
         }
         return handler;
