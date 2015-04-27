@@ -1,23 +1,44 @@
 package com.cougil.king.handler;
 
+import com.cougil.king.users.SessionUsers;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 
-public class LoginHandler implements HttpHandler {
-    public LoginHandler(URI requestURI) {
+public class LoginHandler extends BaseHandler {
+
+    public LoginHandler(SessionUsers sessionUsers) {
+        super(sessionUsers);
     }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        String response = "Login handler!";
-        System.out.println(response);
-        httpExchange.sendResponseHeaders(200, response.length());
+        long startTime = System.nanoTime();
+
+        final String PATH = getPath(httpExchange);
+
         OutputStream os = httpExchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
+
+        try {
+            final Integer userId = Integer.parseInt(PATH.substring(1, PATH.indexOf("/login")));
+            System.out.println("Login handler [" + userId + " - " + startTime + "] - Received request!");
+            final String sessionKey= sessionUsers.login(userId);
+            randomSleep();
+
+            httpExchange.sendResponseHeaders(200, sessionKey.length());
+            os.write(sessionKey.getBytes());
+
+            long elapsedTime = (System.nanoTime() - startTime) / 1000000;
+            System.out.println("Login handler ["+ userId +" - "+startTime+"] - Return response. ElapsedTime: "+elapsedTime+" ms");
+
+        } catch (NumberFormatException nfe) {
+            replyError(httpExchange, "Invalid userId with path '" + PATH + "'", os);
+
+        } finally {
+            os.close();
+        }
+
     }
+
 }

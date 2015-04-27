@@ -1,1 +1,25 @@
-This file was created by IntelliJ IDEA 12.1.6 for binding GitHub repository
+# King Challenge's
+----
+
+This is my solution to the King challenge HTTP mini game.
+
+## Considerations
+
+I've taken some considerations:
+
+* The character encoding accepted is UTF-8. If the platform when the project is deployed nor
+any of the HTTP customers does not accept/use this Charset, the system won't work properly.
+
+* I've supposed that the default settings that the "Executors.newCachedThreadPool()" provides
+are enough for the use case because at it appears in the documentation:
+
+    These pools will typically improve the performance of programs that execute many
+    short-lived asynchronous tasks.
+
+Of course for real production systems it has to be tuned and set up for the final environment
+(ie. limiting the number of threads that the system is able to manage). May be a good approach
+can be use a fixed number of threads based on the number of machine's CPU's.
+
+* In the request body of the Post user score mechanism, I've supposed that only reading the
+first line of the request body I'll able to get the value that I need from the HTTP clients.
+I did not checked if this line is empty or not.

@@ -1,14 +1,15 @@
 package com.cougil.king.handler;
 
+import com.cougil.king.users.SessionUsers;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 
-public class HighScoreListHandler implements HttpHandler {
-    public HighScoreListHandler(URI requestURI) {
+public class HighScoreListHandler extends BaseHandler {
+
+    public HighScoreListHandler(SessionUsers sessionUsers) {
+        super(sessionUsers);
     }
 
     @Override
