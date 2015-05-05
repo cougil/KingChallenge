@@ -14,6 +14,11 @@ public class UserSession {
         this.createdDate = new Date();
     }
 
+    public static String nextSessionId(Integer userId) {
+        // we can create a fixed value based on the 'userId' but it was not clear to do that in the statement of the exercise
+        return Long.toHexString(Double.doubleToLongBits(Math.random()));
+    }
+
     public Integer getUserId() {
         return userId;
     }

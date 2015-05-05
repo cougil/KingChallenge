@@ -25,6 +25,7 @@ public class UserScore implements Comparable<UserScore> {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) return false;
         if (this == obj) return true;
         if (!(obj instanceof UserScore)) {
             return false;
@@ -35,12 +36,12 @@ public class UserScore implements Comparable<UserScore> {
 
     @Override
     public String toString() {
-        return userId.toString()+","+score.toString();
+        return "["+userId.toString()+"] - "+score.toString();
     }
 
     @Override
     public int compareTo(UserScore obj) {
-        if (this == obj || obj.getScore() == this.getScore()) return 0;
+        if (this == obj || obj.getScore().equals(this.getScore())) return 0;
         if (obj.getScore() > this.getScore()) return -1;
         else return 1;
     }

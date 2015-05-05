@@ -1,6 +1,5 @@
 package com.cougil.king;
 
-import com.cougil.king.users.UserKeys;
 import com.cougil.king.users.UserLogoutTask;
 import com.cougil.king.users.UserScore;
 import com.cougil.king.users.UserSession;
@@ -8,6 +7,7 @@ import com.cougil.king.users.UserSession;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class GameUserSessionScores {
 
@@ -23,18 +23,18 @@ public class GameUserSessionScores {
     private volatile ConcurrentHashMap<String, UserSession> sessionUsers;
 
     // Level scores: we will save the 'level' as a key and the list of scores (@UserScore) as a value
-    private volatile ConcurrentHashMap<Integer, ConcurrentSkipListMap<UserScore,Integer>> levelScores;
+    private volatile ConcurrentHashMap<Integer, ConcurrentHashMap<UserScore,Integer>> levelScores;
 
     public GameUserSessionScores() {
         sessionUsers = new ConcurrentHashMap<String, UserSession>();
-        levelScores = new ConcurrentHashMap<Integer, ConcurrentSkipListMap<UserScore,Integer>>();
+        levelScores = new ConcurrentHashMap<Integer, ConcurrentHashMap<UserScore,Integer>>();
 
         Timer userLogoutTimer = new Timer(true);
         userLogoutTimer.schedule(new UserLogoutTask(sessionUsers), 0, LOGOUT_TIMEOUT);
     }
 
     public String login(Integer userId) {
-        final String sessionKey = UserKeys.nextSessionId(userId);
+        final String sessionKey = UserSession.nextSessionId(userId);
         UserSession userSession = new UserSession(userId, sessionKey);
         sessionUsers.put(sessionKey, userSession);
         return sessionKey;
@@ -43,42 +43,86 @@ public class GameUserSessionScores {
     public void score(String sessionKey, Integer levelId, Integer score) {
         UserSession userSession = sessionUsers.get(sessionKey);
         if (userSession != null) {
-            ConcurrentSkipListMap<UserScore, Integer> userScores = levelScores.get(levelId);
+            ConcurrentHashMap<UserScore, Integer> userScores = levelScores.get(levelId);
             if (userScores == null) {
-                levelScores.putIfAbsent(levelId, new ConcurrentSkipListMap<UserScore, Integer>(Collections.reverseOrder()));
+                levelScores.putIfAbsent(levelId, new ConcurrentHashMap<UserScore, Integer>());
                 userScores = levelScores.get(levelId);
             }
 
             UserScore userScore = new UserScore(score, userSession.getUserId());
-            Integer oldScore = userScores.putIfAbsent(userScore, score);
-            if (oldScore != null && oldScore < score) {
+            Integer value = userScores.remove(userScore);
+            Integer oldScore = userScores.putIfAbsent(userScore, userScore.getScore());
+            if (value != null) {
+                userScores.remove(userScore);
+                if (oldScore != null && oldScore > userScore.getScore()) {
+                    userScore = new UserScore(oldScore, userScore.getUserId());
+                } else {
+                    if (value > userScore.getScore()) {
+                        userScore = new UserScore(value, userScore.getUserId());
+                    }
+                }
+                userScores.put(userScore, userScore.getScore());
+            }
+
+/*
+            UserScore userScore = new UserScore(score, userSession.getUserId());
+            test(userScores, userScore);
+            Integer oldScore = null;
+            if (userScores.containsKey(userScore)) {
+                oldScore = userScores.get(userScore);
+                if (oldScore != null && oldScore > score) {
+                    userScores.replace(userScore, oldScore);
+                }
+            } else {
                 userScores.put(userScore, score);
             }
+*/
+
+//                oldScore = userScores.putIfAbsent(userScore, score);
+//                if (oldScore == null) {
+//                    userScores.put(userScore, score);
+//                } else if (oldScore < score) {
+//                    userScores.replace(userScore, score);
+//                }
+
         }
     }
 
-    public Set<UserScore> highScoreList(Integer levelId) {
-        ConcurrentSkipListMap<UserScore, Integer> userScores = levelScores.get(levelId);
+    private void test(ConcurrentSkipListMap<UserScore, Integer> userScores, UserScore userScore) {
+        int i=0;
+        for (UserScore u: userScores.keySet()){
+            System.out.println(i+" "+userScore+" VS "+u+" = "+u.equals(userScore)+" >> "+u.hashCode()+" "+userScore.hashCode());
+            System.out.println(i+" containsKey "+userScores.containsKey(userScore));
+        }
+    }
+
+    public SortedSet<UserScore> highScoreList(Integer levelId) {
+        ConcurrentHashMap<UserScore, Integer> userScores = levelScores.get(levelId);
         return sortedUserScores(userScores);
     }
 
-    private Set<UserScore> sortedUserScores(ConcurrentSkipListMap<UserScore, Integer> userScores) {
+    private SortedSet<UserScore> sortedUserScores(ConcurrentHashMap<UserScore, Integer> userScores) {
         if (userScores == null) {
-            userScores = new ConcurrentSkipListMap<UserScore, Integer>();
+            userScores = new ConcurrentHashMap<UserScore, Integer>();
         }
-        return sortedMap(userScores, MAX_SCORES).keySet();
+        return sortedSetNotRepeatedValues(userScores, MAX_SCORES);
     }
 
-    private <K,V> SortedMap<K,V> sortedMap(SortedMap<K,V> map, final int max_values) {
-        Iterator<K> it = map.keySet().iterator();
-        for (int i = 0; i<max_values && it.hasNext(); i++) {
-            it.next();
+    private <K,V> SortedSet<K> sortedSetNotRepeatedValues(ConcurrentHashMap<K, V> map, final int max_values) {
+        SortedSet<K> sortedSet = new ConcurrentSkipListSet<K>(Collections.reverseOrder());
+        Iterator<K> it = listKeySet(map).listIterator();
+        for (int i = 0; i<max_values && it.hasNext();) {
+            K key = it.next();
+            sortedSet.add(key);
+            i++;
         }
-        if (it.hasNext()) {
-            return map.headMap(it.next());
-        } else {
-            return map;
-        }
+        return sortedSet;
+    }
+
+    private <K,V> List<K> listKeySet(ConcurrentHashMap<K,V> map) {
+        List<K> list= Collections.synchronizedList(new ArrayList<K>(map.keySet()));
+        Collections.sort(list, Collections.reverseOrder());
+        return list;
     }
 
 }

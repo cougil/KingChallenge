@@ -52,6 +52,7 @@ public class HighScoreListHandler extends BaseHandler {
             sb= sb.append(userScore.getUserId());
             sb= sb.append(",");
         }
+        if (sb.length() > 0) sb.deleteCharAt(sb.length()-1);
         return sb.toString();
     }
 }
