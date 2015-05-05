@@ -33,11 +33,11 @@ public class UserSession {
 
     @Override
     public boolean equals(Object obj) {
-        boolean result  = false;
-        if (obj != null && obj instanceof UserSession) {
-            result = ((UserSession) obj).getUserId().equals(this.getUserId());
+        if (this == obj) return true;
+        if (!(obj instanceof UserSession)) {
+            return false;
         }
-        return result;
+        return ((UserSession) obj).getUserId().equals(this.getUserId());
     }
 
     @Override

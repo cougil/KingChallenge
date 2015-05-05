@@ -1,5 +1,6 @@
 package com.cougil.king.uri;
 
+import com.cougil.king.users.UserKeys;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +35,7 @@ public class URIMatcherTest {
 
     @Test
     public void userScoreUriShouldHaveValidSessionKeyAndLevelId() {
-        assertTrue(URIMatcher.isUserScoreLevel("/4711/score?sessionkey=asdfghi"));
+        assertTrue(URIMatcher.isUserScoreLevel("/4711/score?sessionkey="+ UserKeys.nextSessionId(1000)));
     }
 
     @Test

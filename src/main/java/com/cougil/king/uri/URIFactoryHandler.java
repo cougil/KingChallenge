@@ -1,10 +1,10 @@
 package com.cougil.king.uri;
 
+import com.cougil.king.GameUserSessionScores;
 import com.cougil.king.handler.BaseHandler;
 import com.cougil.king.handler.HighScoreListHandler;
 import com.cougil.king.handler.LoginHandler;
 import com.cougil.king.handler.UserScoreLevelHandler;
-import com.cougil.king.users.SessionUsers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -13,8 +13,8 @@ import java.net.URI;
 
 public class URIFactoryHandler extends BaseHandler {
 
-    public URIFactoryHandler(SessionUsers sessionUsers) {
-        super(sessionUsers);
+    public URIFactoryHandler(GameUserSessionScores gameUserSessionScores) {
+        super(gameUserSessionScores);
     }
 
     @Override
@@ -30,11 +30,11 @@ public class URIFactoryHandler extends BaseHandler {
     private HttpHandler getHandler(URI requestURI) {
         HttpHandler handler = null;
         if (URIMatcher.isLogin(requestURI.toString())) {
-            handler = new LoginHandler(sessionUsers);
+            handler = new LoginHandler(gameUserSessionScores);
         } else if (URIMatcher.isHighScoreList(requestURI.toString())) {
-            handler = new HighScoreListHandler(sessionUsers);
+            handler = new HighScoreListHandler(gameUserSessionScores);
         } else if (URIMatcher.isUserScoreLevel(requestURI.toString())) {
-            handler = new UserScoreLevelHandler(sessionUsers);
+            handler = new UserScoreLevelHandler(gameUserSessionScores);
         } else {
             System.out.println("---No handler for request: "+requestURI.toString());
         }

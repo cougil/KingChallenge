@@ -1,7 +1,6 @@
 package com.cougil.king;
 
 import com.cougil.king.uri.URIFactoryHandler;
-import com.cougil.king.users.SessionUsers;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -13,13 +12,13 @@ public class GameServer {
     public static final int PORT = 8081;
     public static final int DEFAULT_BACKLOG = 0;
 
-    private SessionUsers sessionUsers = new SessionUsers();
+    private GameUserSessionScores gameUserSessionScores = new GameUserSessionScores();
 
     public void start() {
         HttpServer httpServer = null;
         try {
             httpServer = HttpServer.create(new InetSocketAddress(PORT), DEFAULT_BACKLOG);
-            httpServer.createContext("/", new URIFactoryHandler(sessionUsers));
+            httpServer.createContext("/", new URIFactoryHandler(gameUserSessionScores));
             httpServer.setExecutor(Executors.newCachedThreadPool());
             httpServer.start();
 

@@ -1,6 +1,6 @@
 package com.cougil.king.handler;
 
-import com.cougil.king.users.SessionUsers;
+import com.cougil.king.GameUserSessionScores;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -10,10 +10,10 @@ import java.util.Random;
 
 public abstract class BaseHandler implements HttpHandler {
 
-    protected SessionUsers sessionUsers;
+    protected GameUserSessionScores gameUserSessionScores;
 
-    public BaseHandler(SessionUsers sessionUsers) {
-        this.sessionUsers = sessionUsers;
+    public BaseHandler(GameUserSessionScores gameUserSessionScores) {
+        this.gameUserSessionScores = gameUserSessionScores;
     }
 
     protected String getPath(HttpExchange httpExchange) {

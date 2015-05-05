@@ -1,8 +1,8 @@
 package com.cougil.king.handler;
 
+import com.cougil.king.GameUserSessionScores;
 import com.cougil.king.exception.ScoreException;
 import com.cougil.king.exception.SessionKeyException;
-import com.cougil.king.users.SessionUsers;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.*;
@@ -10,8 +10,8 @@ import java.net.URLDecoder;
 
 public class UserScoreLevelHandler extends BaseHandler {
 
-    public UserScoreLevelHandler(SessionUsers sessionUsers) {
-        super(sessionUsers);
+    public UserScoreLevelHandler(GameUserSessionScores gameUserSessionScores) {
+        super(gameUserSessionScores);
     }
 
     @Override
@@ -30,11 +30,9 @@ public class UserScoreLevelHandler extends BaseHandler {
 
             System.out.println("User score handler [" + levelId + "/" + score + " - " + startTime + "] - Received request!");
 
-            sessionUsers.score(sessionKey, score, levelId);
+            gameUserSessionScores.score(sessionKey, levelId, score);
             randomSleep();
-
-            httpExchange.sendResponseHeaders(200, sessionKey.length());
-            os.write(sessionKey.getBytes());
+            httpExchange.sendResponseHeaders(200,-1);
 
             long elapsedTime = (System.nanoTime() - startTime) / 1000000;
             System.out.println("User score handler ["+ levelId +"/"+ score + " - "+startTime+"] - Return response. ElapsedTime: "+elapsedTime+" ms");
@@ -46,7 +44,7 @@ public class UserScoreLevelHandler extends BaseHandler {
             replyError(httpExchange, "Error retrieving sessionKey with query '" + QUERY + "'", os);
 
         } catch (ScoreException se) {
-            replyError(httpExchange, "Error retrieving score with path '" + PATH + "'", os);
+            replyError(httpExchange, "Error retrieving score with query '" + QUERY + "'", os);
 
         } finally {
             os.close();
