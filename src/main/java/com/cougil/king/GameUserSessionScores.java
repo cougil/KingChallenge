@@ -50,19 +50,7 @@ public class GameUserSessionScores {
             }
 
             UserScore userScore = new UserScore(score, userSession.getUserId());
-            Integer value = userScores.remove(userScore);
-            Integer oldScore = userScores.putIfAbsent(userScore, userScore.getScore());
-            if (value != null) {
-                userScores.remove(userScore);
-                if (oldScore != null && oldScore > userScore.getScore()) {
-                    userScore = new UserScore(oldScore, userScore.getUserId());
-                } else {
-                    if (value > userScore.getScore()) {
-                        userScore = new UserScore(value, userScore.getUserId());
-                    }
-                }
-                userScores.put(userScore, userScore.getScore());
-            }
+            putUserScore(userScores, userScore);
 
 /*
             UserScore userScore = new UserScore(score, userSession.getUserId());
@@ -86,6 +74,15 @@ public class GameUserSessionScores {
 //                }
 
         }
+    }
+
+    private void putUserScore(ConcurrentHashMap<UserScore, Integer> userScores, UserScore userScore) {
+        Integer oldScore = userScores.putIfAbsent(userScore, userScore.getScore());
+        userScores.remove(userScore);
+        if (oldScore != null && oldScore > userScore.getScore()) {
+            userScore = new UserScore(oldScore, userScore.getUserId());
+        }
+        userScores.put(userScore, userScore.getScore());
     }
 
     private void test(ConcurrentSkipListMap<UserScore, Integer> userScores, UserScore userScore) {
@@ -113,8 +110,7 @@ public class GameUserSessionScores {
         Iterator<K> it = listKeySet(map).listIterator();
         for (int i = 0; i<max_values && it.hasNext();) {
             K key = it.next();
-            sortedSet.add(key);
-            i++;
+            if (sortedSet.add(key)) i++;
         }
         return sortedSet;
     }

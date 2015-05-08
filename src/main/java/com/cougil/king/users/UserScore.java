@@ -41,8 +41,8 @@ public class UserScore implements Comparable<UserScore> {
 
     @Override
     public int compareTo(UserScore obj) {
-        if (this == obj || obj.getScore().equals(this.getScore())) return 0;
-        if (obj.getScore() > this.getScore()) return -1;
+        if (obj.getScore().equals(this.getScore())) return 0;
+        else if (obj.getScore() > this.getScore()) return -1;
         else return 1;
     }
 }
