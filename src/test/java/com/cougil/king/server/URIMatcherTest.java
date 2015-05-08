@@ -1,4 +1,4 @@
-package com.cougil.king.uri;
+package com.cougil.king.server;
 
 import com.cougil.king.users.UserSession;
 import org.junit.Before;

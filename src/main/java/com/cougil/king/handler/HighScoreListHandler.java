@@ -1,6 +1,6 @@
 package com.cougil.king.handler;
 
-import com.cougil.king.GameUserSessionScores;
+import com.cougil.king.service.GameService;
 import com.cougil.king.users.UserScore;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -8,10 +8,24 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
 
+/**
+ * Handler responsible of managing the requests asking for the high score list for a specific level.
+ * <p>
+ * It returns a comma separated list of values in descending score order. Only the highest score for each user
+ * counts and if the user hasn't submitted a score for the level, no score is presented for that user. Also
+ * a request for a high score list of a level without any scores submitted, will return an empty string.
+ * <p>
+ * Format: <code>GET /&lt;levelid&gt;/highscorelist</code>
+ * <p>
+ * Example request: GET /12345/highscorelist
+ * <p>
+ * Example response: 100=1000,12345=800,2222=750,10=600
+ * </p>
+ */
 public class HighScoreListHandler extends BaseHandler {
 
-    public HighScoreListHandler(GameUserSessionScores gameUserSessionScores) {
-        super(gameUserSessionScores);
+    public HighScoreListHandler(GameService gameService) {
+        super(gameService);
     }
 
     @Override
@@ -19,16 +33,16 @@ public class HighScoreListHandler extends BaseHandler {
         long startTime = System.nanoTime();
 
         final String PATH = getPath(httpExchange);
-
         OutputStream os = httpExchange.getResponseBody();
 
         try {
             final Integer levelId = Integer.parseInt(PATH.substring(1, PATH.indexOf("/highscorelist")));
             System.out.println("HighScoreList handler [" + levelId + " - " + startTime + "] - Received request!");
 
-            Set<UserScore> userScores = gameUserSessionScores.highScoreList(levelId);
+            Set<UserScore> userScores = gameService.getHighScoreList(levelId);
             final String response = createCSV(userScores);
-            randomSleep();
+
+            System.out.println("HighScoreList return - [" + response + "]");
 
             httpExchange.sendResponseHeaders(200, response.length());
             os.write(response.getBytes());
@@ -37,8 +51,9 @@ public class HighScoreListHandler extends BaseHandler {
             System.out.println("HighScoreList handler ["+ levelId +" - "+startTime+"] - Return response: ["+response+"]. ElapsedTime: "+elapsedTime+" ms");
 
         } catch (NumberFormatException nfe) {
-            replyError(httpExchange, "Invalid levelId with path '" + PATH + "'", os);
-
+            replyError(httpExchange, "Invalid levelId with path '" + PATH + "'", httpExchange.getResponseBody());
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             os.close();
         }

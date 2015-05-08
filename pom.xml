@@ -31,7 +31,7 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
+<!--                    <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
                         <version>3.0.0</version>
@@ -50,8 +50,19 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <mainClass>com.cougil.king.Application</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>

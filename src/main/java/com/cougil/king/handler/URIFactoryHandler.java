@@ -1,20 +1,20 @@
-package com.cougil.king.uri;
+package com.cougil.king.handler;
 
-import com.cougil.king.GameUserSessionScores;
-import com.cougil.king.handler.BaseHandler;
-import com.cougil.king.handler.HighScoreListHandler;
-import com.cougil.king.handler.LoginHandler;
-import com.cougil.king.handler.UserScoreLevelHandler;
+import com.cougil.king.server.URIMatcher;
+import com.cougil.king.service.GameService;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.net.URI;
 
+/**
+ * Handler responsible of setup the different {@link java.net.URI} accepted by the application
+ */
 public class URIFactoryHandler extends BaseHandler {
 
-    public URIFactoryHandler(GameUserSessionScores gameUserSessionScores) {
-        super(gameUserSessionScores);
+    public URIFactoryHandler(GameService gameService) {
+        super(gameService);
     }
 
     @Override
@@ -30,11 +30,11 @@ public class URIFactoryHandler extends BaseHandler {
     private HttpHandler getHandler(URI requestURI) {
         HttpHandler handler = null;
         if (URIMatcher.isLogin(requestURI.toString())) {
-            handler = new LoginHandler(gameUserSessionScores);
+            handler = new LoginHandler(gameService);
         } else if (URIMatcher.isHighScoreList(requestURI.toString())) {
-            handler = new HighScoreListHandler(gameUserSessionScores);
+            handler = new HighScoreListHandler(gameService);
         } else if (URIMatcher.isUserScoreLevel(requestURI.toString())) {
-            handler = new UserScoreLevelHandler(gameUserSessionScores);
+            handler = new UserScoreLevelHandler(gameService);
         } else {
             System.out.println("---No handler for request: "+requestURI.toString());
         }

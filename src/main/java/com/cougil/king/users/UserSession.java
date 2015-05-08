@@ -3,6 +3,10 @@ package com.cougil.king.users;
 
 import java.util.Date;
 
+/**
+ * This object holds the relationship between the userId and the sessionKey linked to that user plus
+ * the exact moment when the session was created
+ */
 public class UserSession {
     private final Integer userId;
     private final String sessionKey;
@@ -14,6 +18,13 @@ public class UserSession {
         this.createdDate = new Date();
     }
 
+    /**
+     * Returns a new session id for the specified user. This implementation does not create a fixed value
+     * for each user, it is completely pseudo-random for each call. So any new call to that method creates new
+     * session ids whether or not the user was already logged in
+     * @param userId user id
+     * @return The new session id for the user
+     */
     public static String nextSessionId(Integer userId) {
         // we can create a fixed value based on the 'userId' but it was not clear to do that in the statement of the exercise
         return Long.toHexString(Double.doubleToLongBits(Math.random()));
@@ -28,7 +39,7 @@ public class UserSession {
     }
 
     public Date getCreatedDate() {
-        return createdDate;
+        return (Date)createdDate.clone();
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.cougil.king.handler;
 
-import com.cougil.king.GameUserSessionScores;
 import com.cougil.king.exception.ScoreException;
 import com.cougil.king.exception.SessionKeyException;
+import com.cougil.king.service.GameService;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.*;
@@ -10,8 +10,8 @@ import java.net.URLDecoder;
 
 public class UserScoreLevelHandler extends BaseHandler {
 
-    public UserScoreLevelHandler(GameUserSessionScores gameUserSessionScores) {
-        super(gameUserSessionScores);
+    public UserScoreLevelHandler(GameService gameService) {
+        super(gameService);
     }
 
     @Override
@@ -30,8 +30,7 @@ public class UserScoreLevelHandler extends BaseHandler {
 
             System.out.println("User score handler [" + levelId + "/" + score + " - " + startTime + "] - Received request!");
 
-            gameUserSessionScores.score(sessionKey, levelId, score);
-            randomSleep();
+            gameService.score(sessionKey, levelId, score);
             httpExchange.sendResponseHeaders(200,-1);
 
             long elapsedTime = (System.nanoTime() - startTime) / 1000000;

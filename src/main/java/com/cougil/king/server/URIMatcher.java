@@ -1,4 +1,4 @@
-package com.cougil.king.uri;
+package com.cougil.king.server;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

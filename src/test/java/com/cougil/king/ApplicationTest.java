@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 /**
  * Unit test for simple App.
  */
-public class MainApplicationTest extends TestCase {
+public class ApplicationTest extends TestCase {
 
     /**
      * Rigourous Test :-)

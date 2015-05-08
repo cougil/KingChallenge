@@ -1,17 +1,27 @@
 package com.cougil.king.users;
 
-import com.cougil.king.GameUserSessionScores;
-
 import java.util.Date;
+import java.util.Map;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * This task is responsible of removing User Sessions {@link UserSession} valid only during a certain time
+ * (by default 10 mins)
+ */
 public class UserLogoutTask extends TimerTask {
 
-    private volatile ConcurrentHashMap<String, UserSession> userSessions;
+    private Map<String, UserSession> userSessions;
 
-    public UserLogoutTask(ConcurrentHashMap<String, UserSession> userSessions) {
+    public final long LOGOUT_TIMEOUT;
+
+    /**
+     * Creates a new task responsible of removing user sessions created previously
+     * @param userSessions Map with the list of users and sessions created previously
+     * @param logoutTimeout Default timeout in milliseconds until a user session must be removed
+     */
+    public UserLogoutTask(Map<String, UserSession> userSessions, final long logoutTimeout) {
         this.userSessions = userSessions;
+        this.LOGOUT_TIMEOUT = logoutTimeout;
     }
 
     @Override
@@ -19,7 +29,7 @@ public class UserLogoutTask extends TimerTask {
         final Date now = new Date();
         for (UserSession userSession : userSessions.values()) {
             Date createdDate = userSession.getCreatedDate();
-            if (now.getTime() - createdDate.getTime() > GameUserSessionScores.LOGOUT_TIMEOUT) {
+            if (now.getTime() - createdDate.getTime() > LOGOUT_TIMEOUT) {
                 UserSession user = userSessions.remove(userSession.getSessionKey());
                 System.out.println("Removed userSession ["+user+"]");
             }
