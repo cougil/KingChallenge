@@ -23,3 +23,10 @@ can be use a fixed number of threads based on the number of machine's CPU's.
 * In the request body of the Post user score mechanism, I've supposed that only reading the
 first line of the request body I'll able to get the value that I need from the HTTP clients.
 I did not checked if this line is empty or not.
+
+* The exercise doesn't explain anything about what could happen if a user tries to login into
+the system many times and still has a valid session key assigned. In my case I decided to
+return a new session key in the login mechanism for each call received in any case, regardless the
+user is already logged in or not, understanding that the client responsible to sending this requests
+won't let it happen. In a real case, may be the solution could be to reset the timeout that the user
+has until it has to be disconnected.

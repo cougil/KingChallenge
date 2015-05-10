@@ -1,7 +1,7 @@
 package com.cougil.king.handler;
 
+import com.cougil.king.model.UserScore;
 import com.cougil.king.service.GameService;
-import com.cougil.king.users.UserScore;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -17,10 +17,10 @@ import java.util.Set;
  * <p>
  * Format: <code>GET /&lt;levelid&gt;/highscorelist</code>
  * <p>
- * Example request: GET /12345/highscorelist
- * <p>
- * Example response: 100=1000,12345=800,2222=750,10=600
- * </p>
+ * <code>Example: <br>
+ * Request: GET /42/highscorelist<br>
+ * Response: 1000=12345,230=800,222=750,10=600
+ * </code>
  */
 public class HighScoreListHandler extends BaseHandler {
 

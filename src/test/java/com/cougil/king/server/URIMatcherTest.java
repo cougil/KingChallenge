@@ -1,6 +1,6 @@
 package com.cougil.king.server;
 
-import com.cougil.king.users.UserSession;
+import com.cougil.king.model.UserSession;
 import org.junit.Before;
 import org.junit.Test;
 

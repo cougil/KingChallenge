@@ -8,6 +8,19 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.*;
 import java.net.URLDecoder;
 
+/**
+ * Handler responsible of managing the requests updating the high score of a specific level and user.
+ * <p>
+ * Does not return anything and it only replies to valid session keys.
+ * <p>
+ * Format: <code>POST /&lt;levelid&gt;/score?sessionkey=&lt;sessionkey&gt;</code>
+ * <p>
+ * <code>Example:<br>
+ * Request: POST /42/score?sessionkey=3fdd2a0da0b09ed0<br>
+ *     Body: 1000<br>
+ * Response: (nothing)
+ * </code>
+ */
 public class UserScoreLevelHandler extends BaseHandler {
 
     public UserScoreLevelHandler(GameService gameService) {

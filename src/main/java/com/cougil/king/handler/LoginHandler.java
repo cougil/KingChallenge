@@ -9,11 +9,15 @@ import java.io.OutputStream;
 /**
  * Handler responsible of managing the requests for login a user.
  * <p>
+ * It returns a session key valid for a fixed amount of time (by default 10 minutes)
+ * <p>
  * Format: <code>GET /&lt;userid&gt;/login</code>
  * <p>
- * Example: GET /12345/login
+ * <code>Example: <br>
+ * Request: GET /12345/login<br>
+ * Response: 3fdd2a0da0b09ed0
+ * </code>
  */
-
 public class LoginHandler extends BaseHandler {
 
     public LoginHandler(GameService gameService) {

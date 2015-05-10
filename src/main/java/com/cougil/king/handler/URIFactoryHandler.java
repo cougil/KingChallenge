@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Handler responsible of setup the different {@link java.net.URI} accepted by the application
+ * Handler responsible of setup the different {@link java.net.URI} accepted by the HTTP server with the
+ * right {@link com.sun.net.httpserver.HttpHandler} that will attend the incoming request
  */
 public class URIFactoryHandler extends BaseHandler {
 

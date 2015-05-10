@@ -3,6 +3,9 @@ package com.cougil.king.server;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Object responsible of matching the valid {@link java.net.URI} accepted by the HTTP server
+ */
 public class URIMatcher {
     final static Pattern loginPattern = Pattern.compile("/\\d+/login", Pattern.CASE_INSENSITIVE);
     final static Pattern userScoreLevelPattern = Pattern.compile("/\\d+/score\\?sessionkey=\\w+", Pattern.CASE_INSENSITIVE);

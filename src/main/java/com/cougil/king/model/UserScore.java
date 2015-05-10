@@ -1,5 +1,8 @@
-package com.cougil.king.users;
+package com.cougil.king.model;
 
+/**
+ * This object holds the relationship between the userId and the score the user has submitted
+ */
 public class UserScore implements Comparable<UserScore> {
 
     private final Integer score;
