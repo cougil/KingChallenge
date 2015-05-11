@@ -17,20 +17,20 @@ public class SessionUsers {
         sessionUsers = new ConcurrentHashMap<String, UserSession>();
     }
 
+    public UserSession put(String sessionKey, UserSession value) {
+        return sessionUsers.put(sessionKey, value);
+    }
+
+    public UserSession remove(String sessionKey) {
+        return sessionUsers.remove(sessionKey);
+    }
+
+    public UserSession get(String sessionKey) {
+        return sessionUsers.get(sessionKey);
+    }
+
     public Collection<UserSession> values() {
         return sessionUsers.values();
-    }
-
-    public UserSession put(String key, UserSession value) {
-        return sessionUsers.put(key, value);
-    }
-
-    public UserSession remove(Object key) {
-        return sessionUsers.remove(key);
-    }
-
-    public UserSession get(Object key) {
-        return sessionUsers.get(key);
     }
 
 }

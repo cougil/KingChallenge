@@ -18,9 +18,10 @@ public class LevelScores {
     }
 
     /**
-     * Returns the map with the user scores for the specified level id.
+     * Returns the map with the user scores for the specified level id or null in the case that
+     * no user had submitted score for that level.
      * @param levelId Level id whose associated user scores are to be returned
-     * @return Map with the user scores
+     * @return Map with the user scores or null if nobody has submitted score for the specified level
      */
     public ConcurrentHashMap<UserScore, Integer> getUserScores(Integer levelId) {
         return mapLevelScores.get(levelId);
@@ -41,7 +42,14 @@ public class LevelScores {
         putUserScore(userScores, userScore);
     }
 
-    private void putUserScore(ConcurrentHashMap<UserScore, Integer> userScores, UserScore userScore) {
+    /**
+     * Adds the specified user score to the thread-safe map that contains all of them. In case a previous
+     * {@link com.cougil.king.model.UserScore} is found it is compared with the one specified saving
+     * only the highest value
+     * @param userScores Thread-safe map with all the user scores
+     * @param userScore User score to be putted into the map
+     */
+    protected void putUserScore(ConcurrentHashMap<UserScore, Integer> userScores, UserScore userScore) {
         Integer oldScore = userScores.putIfAbsent(userScore, userScore.getScore());
         userScores.remove(userScore);
         // Just in case the previously score of the user is greater than the actual, we will save it again

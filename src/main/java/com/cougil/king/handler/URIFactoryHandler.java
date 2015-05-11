@@ -28,7 +28,7 @@ public class URIFactoryHandler extends BaseHandler {
         }
     }
 
-    private HttpHandler getHandler(URI requestURI) {
+    public HttpHandler getHandler(URI requestURI) {
         HttpHandler handler = null;
         if (URIMatcher.isLogin(requestURI.toString())) {
             handler = new LoginHandler(gameService);

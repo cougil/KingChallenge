@@ -15,8 +15,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GameServiceImpl implements GameService {
 
+    public static final long ONE_MINUTE = 1 * 1000;
+//    public static final long ONE_MINUTE = 60 * 1000;
     public static final long LOGOUT_TIMEOUT = 3 * 1000;
-//    public static final long LOGOUT_TIMEOUT = 10 * 60 * 1000;    // 10 minutes
+//    public static final long LOGOUT_TIMEOUT = 10 * ONE_MINUTE;    // 10 minutes
 
     private static final int MAX_SCORES = 15;
 
@@ -28,7 +30,10 @@ public class GameServiceImpl implements GameService {
     public GameServiceImpl() {
         sessionUsers = new SessionUsers();
         levelScores = new LevelScores();
+        // we must run & schedule the task in advance
         userLogoutTimer = new Timer(true);
+        // the scheduled task will be launched every minute
+        userLogoutTimer.schedule(new UserLogoutTask(sessionUsers, LOGOUT_TIMEOUT), LOGOUT_TIMEOUT, ONE_MINUTE);
     }
 
     @Override
@@ -36,7 +41,6 @@ public class GameServiceImpl implements GameService {
         final String sessionKey = UserSession.nextSessionId(userId);
         UserSession userSession = new UserSession(userId, sessionKey);
         sessionUsers.put(sessionKey, userSession);
-        userLogoutTimer.schedule(new UserLogoutTask(sessionUsers, LOGOUT_TIMEOUT), LOGOUT_TIMEOUT);
         return sessionKey;
     }
 
