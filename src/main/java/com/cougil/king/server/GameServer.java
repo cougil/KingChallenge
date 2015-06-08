@@ -17,31 +17,41 @@ public class GameServer {
 
     public static final int DEFAULT_PORT = 8081;
     public static final int DEFAULT_BACKLOG = 0;
-    private final int PORT;
-
+    private HttpServer httpServer;
     private GameService gameService;
 
-    public GameServer() {
+    public GameServer() throws IOException {
         this(DEFAULT_PORT);
     }
 
-    public GameServer(int port) {
-        this.PORT = port;
+    public GameServer(final int PORT) throws IOException {
+        this(HttpServer.create(new InetSocketAddress(PORT), DEFAULT_BACKLOG));
+    }
+
+    public GameServer(HttpServer httpServer) {
+        this.httpServer = httpServer;
         this.gameService = new GameServiceImpl();
     }
 
     public void start() {
-        HttpServer httpServer = null;
-        try {
-            httpServer = HttpServer.create(new InetSocketAddress(PORT), DEFAULT_BACKLOG);
-            httpServer.createContext("/", new URIFactoryHandler(gameService));
-            httpServer.setExecutor(Executors.newCachedThreadPool());
-            httpServer.start();
-            System.out.println("Server started.");
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Runtime.getRuntime().addShutdownHook(new ShutdownGameServer());
+
+        httpServer.createContext("/", new URIFactoryHandler(gameService));
+        httpServer.setExecutor(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()*100));
+        httpServer.start();
+
+        System.out.println("Server started.");
     }
 
+    public void stop() {
+        httpServer.stop(0);
+    }
+
+    private class ShutdownGameServer extends Thread {
+        public void run() {
+            httpServer.stop(0);
+        }
+
+    }
 }

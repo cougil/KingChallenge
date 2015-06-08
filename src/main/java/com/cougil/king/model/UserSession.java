@@ -13,9 +13,13 @@ public class UserSession {
     private final Date createdDate;
 
     public UserSession(Integer userId, String sessionKey) {
+        this(userId, sessionKey, new Date());
+    }
+
+    public UserSession(Integer userId, String sessionKey, Date createdDate) {
         this.userId = userId;
         this.sessionKey = sessionKey;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
 
     /**

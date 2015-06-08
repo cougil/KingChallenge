@@ -17,7 +17,7 @@ public class CollectionUtils {
      * @param <V> Value type of the map
      * @return an ordered set for the specified parameters
      */
-    public static <K,V> SortedSet<K> keySetReverseOrder(Map<K, V> map, final int MAX_VALUES) {
+    public static <K,V> SortedSet<K> keySetReverseOrder(Map<K, V> map, @SuppressWarnings("SameParameterValue") final int MAX_VALUES) {
         SortedSet<K> sortedSet = new ConcurrentSkipListSet<K>(Collections.reverseOrder());
         List<K> list = CollectionUtils.reversedListKeySet(map.keySet());
         for (int i=0,j=0; i<MAX_VALUES && j<list.size();j++) {

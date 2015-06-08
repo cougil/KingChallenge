@@ -1,7 +1,7 @@
 package com.cougil.king.handler;
 
 import com.cougil.king.model.UserSession;
-import com.cougil.king.service.GameServiceImpl;
+import com.cougil.king.service.GameService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class URIFactoryHandlerTest {
 
@@ -17,7 +18,7 @@ public class URIFactoryHandlerTest {
 
     @Before
     public void setUp() {
-        uriFactoryHandler = new URIFactoryHandler( new GameServiceImpl() );
+        uriFactoryHandler = new URIFactoryHandler( mock(GameService.class) );
     }
 
     @Test

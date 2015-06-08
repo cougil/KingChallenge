@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameServiceImpl implements GameService {
 
     public static final long ONE_MINUTE = 1 * 1000;
-//    public static final long ONE_MINUTE = 60 * 1000;
+//    public static final long ONE_MINUTE = 60 * 1000; // one minute
     public static final long LOGOUT_TIMEOUT = 3 * 1000;
 //    public static final long LOGOUT_TIMEOUT = 10 * ONE_MINUTE;    // 10 minutes
 
@@ -28,20 +28,28 @@ public class GameServiceImpl implements GameService {
     private final Timer userLogoutTimer;
 
     public GameServiceImpl() {
-        sessionUsers = new SessionUsers();
-        levelScores = new LevelScores();
         // we must run & schedule the task in advance
-        userLogoutTimer = new Timer(true);
+        this(new SessionUsers(), new LevelScores(), new Timer(true));
+    }
+
+    protected GameServiceImpl(SessionUsers sessionUsers, LevelScores levelScores, Timer userLogoutTimer) {
+        this.sessionUsers = sessionUsers;
+        this.levelScores = levelScores;
+        this.userLogoutTimer = userLogoutTimer;
         // the scheduled task will be launched every minute
         userLogoutTimer.schedule(new UserLogoutTask(sessionUsers, LOGOUT_TIMEOUT), LOGOUT_TIMEOUT, ONE_MINUTE);
     }
 
     @Override
     public String login(Integer userId) {
+        UserSession userSession = createUserSession(userId);
+        sessionUsers.put(userSession.getSessionKey(), userSession);
+        return userSession.getSessionKey();
+    }
+
+    protected UserSession createUserSession(Integer userId) {
         final String sessionKey = UserSession.nextSessionId(userId);
-        UserSession userSession = new UserSession(userId, sessionKey);
-        sessionUsers.put(sessionKey, userSession);
-        return sessionKey;
+        return new UserSession(userId, sessionKey);
     }
 
     @Override
